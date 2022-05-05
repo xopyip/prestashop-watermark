@@ -66,7 +66,7 @@ class Watermark extends Module
     {
         $this->name = 'watermark';
         $this->tab = 'administration';
-        $this->version = '2.0.0';
+        $this->version = '2.0.1';
         $this->author = 'PrestaShop';
 
         $this->bootstrap = true;
@@ -444,10 +444,8 @@ RewriteRule [0-9/]+/[0-9]+\\.jpg$ - [F]
         return $return;
     }
 
-    private function resizeWatermark($originalFile)
+    private function resizeWatermark($originalFile, $resize)
     {
-        $resize = $this->resize / 100;
-
         $width = imagesx($originalFile);
         $height = imagesy($originalFile);
         $newWidth = $width * $resize;
@@ -494,7 +492,7 @@ RewriteRule [0-9/]+/[0-9]+\\.jpg$ - [F]
         list($imageWidth, $imageHeight) = getimagesize($imagepath);
         list($w_width, $w_height) = getimagesize($watermarkpath);
 
-        $watermarkSize = $this->resizeWatermark($imagew);
+        $watermarkSize = $this->resizeWatermark($imagew, $this->resize/100 * ($imageWidth / $w_width));
 
         $watermark = imagecreatetruecolor($watermarkSize[0], $watermarkSize[1]);
 
@@ -596,7 +594,7 @@ RewriteRule [0-9/]+/[0-9]+\\.jpg$ - [F]
                     ],
                     [
                         'type' => 'text',
-                        'label' => $this->trans('Watermark resize % (1-100)', [], 'Modules.Watermark.Admin'),
+                        'label' => $this->trans('Watermark width % (1-100)', [], 'Modules.Watermark.Admin'),
                         'name' => 'resize',
                         'class' => 'fixed-width-md',
                     ],
